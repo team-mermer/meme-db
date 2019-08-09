@@ -45,3 +45,31 @@ func GetMemeWithoutTags(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "can't write json string to response", http.StatusBadRequest)
 	}
 }
+
+// InsertMemeWithoutTags api to insert meme's basic info besides tags and about
+func InsertMemeWithoutTags(w http.ResponseWriter, r *http.Request) {
+	db, connectErr := connectDB()
+	if connectErr != nil {
+		log.Println(connectErr.Error())
+		http.Error(w, "connect db error", http.StatusBadRequest)
+	}
+
+	memes := []memeDetail{
+		memeDetail{
+			Title:    "corgi-1",
+			ImageURL: "http://placecorgi.com/600/600",
+			About:    "",
+			Tags:     nil,
+		},
+		memeDetail{
+			Title:    "corgi-2",
+			ImageURL: "http://placecorgi.com/600/600",
+			About:    "",
+			Tags:     nil,
+		},
+	}
+	if err := insertMemes(db, memes); err != nil {
+		log.Println(err.Error())
+		http.Error(w, "can't insert memes without tags", http.StatusBadRequest)
+	}
+}

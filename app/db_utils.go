@@ -162,7 +162,6 @@ func getMemesWithoutAbout(db *sql.DB, limit int) ([]memeDetail, error) {
 }
 
 func insertMemes(db *sql.DB, memes []memeDetail) error {
-	// sqlQuery := fmt.Sprintf("")
 	sqlStr := "INSERT INTO meme(title, image_path) VALUES "
 	vals := []interface{}{}
 
