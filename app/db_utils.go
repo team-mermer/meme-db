@@ -160,3 +160,26 @@ func getMemesWithoutAbout(db *sql.DB, limit int) ([]memeDetail, error) {
 
 	return memes, nil
 }
+
+func insertMemes(db *sql.DB, memes []memeDetail) error {
+	// sqlQuery := fmt.Sprintf("")
+	sqlStr := "INSERT INTO meme(title, image_path) VALUES "
+	vals := []interface{}{}
+
+	for _, meme := range memes {
+		sqlStr += "(?, ?),"
+		vals = append(vals, meme.Title, meme.ImageURL)
+	}
+	//trim the last ,
+	sqlStr = sqlStr[0 : len(sqlStr)-2]
+	//prepare the statement
+	stmt, _ := db.Prepare(sqlStr)
+
+	//format all vals at once
+	if _, err := stmt.Exec(vals...); err != nil {
+		log.Printf("DB statement execution with error: %v\n", err)
+		return err
+	}
+
+	return nil
+}
