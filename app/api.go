@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-// GetMemeDetails a func to return response for search_by_text api
+// GetMemeDetails api func to return meme details
 func GetMemeDetails(w http.ResponseWriter, r *http.Request) {
 	// w.Header().Set("Access-Control-Allow-Origin", "*")
 
