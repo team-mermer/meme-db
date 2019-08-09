@@ -110,3 +110,53 @@ func getMemesByIds(db *sql.DB, memeIds []int) ([]memeDetail, error) {
 
 	return memes, nil
 }
+
+func getMemesWithoutAbout(db *sql.DB, limit int) ([]memeDetail, error) {
+	var memes []memeDetail
+
+	sqlQuery := fmt.Sprintf(
+		`
+		SELECT
+			id,
+			title,
+			image_path
+		FROM
+			meme
+		WHERE
+			about IS NULL
+		LIMIT %d
+		`,
+		limit)
+
+	var rows *sql.Rows
+	rows, queryErr := db.Query(sqlQuery)
+	if queryErr != nil {
+		log.Print(queryErr)
+		return memes, queryErr
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			id    int
+			title string
+			path  string
+		)
+		if err := rows.Scan(&id, &title, &path); err != nil {
+			log.Fatal(err)
+			return memes, err
+		}
+
+		meme := memeDetail{
+			ID:       id,
+			Title:    title,
+			ImageURL: path,
+			About:    "",
+			Tags:     nil,
+		}
+
+		memes = append(memes, meme)
+	}
+
+	return memes, nil
+}
