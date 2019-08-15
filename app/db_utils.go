@@ -6,6 +6,8 @@ import (
 	"log"
 	"strconv"
 	"strings"
+
+	_ "github.com/lib/pq" // postgres driver
 )
 
 func connectDB() (*sql.DB, error) {
