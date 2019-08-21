@@ -68,8 +68,43 @@ func InsertMemeWithoutTags(w http.ResponseWriter, r *http.Request) {
 			Tags:     nil,
 		},
 	}
+
 	if err := insertMemes(db, memes); err != nil {
 		log.Println(err.Error())
-		http.Error(w, "can't insert memes without tags", http.StatusBadRequest)
+		http.Error(w, "fail to insert memes without tags", http.StatusBadRequest)
+	}
+}
+
+// InsertMemeAboutsAndTags api to insert meme's advanced info, i.e. tags and about
+func InsertMemeAboutsAndTags(w http.ResponseWriter, r *http.Request) {
+	db, connectErr := connectDB()
+	if connectErr != nil {
+		log.Println(connectErr.Error())
+		http.Error(w, "connect db error", http.StatusBadRequest)
+	}
+
+	memes := []memeDetail{
+		memeDetail{
+			Title:    "corgi-1",
+			ImageURL: "http://placecorgi.com/600/600",
+			About:    "",
+			Tags:     nil,
+		},
+		memeDetail{
+			Title:    "corgi-2",
+			ImageURL: "http://placecorgi.com/600/600",
+			About:    "",
+			Tags:     nil,
+		},
+	}
+
+	if err := insertMemeAbouts(db, memes); err != nil {
+		log.Println(err.Error())
+		http.Error(w, "fail to insert meme abouts", http.StatusBadRequest)
+	}
+
+	if err := insertMemeTags(db, memes); err != nil {
+		log.Println(err.Error())
+		http.Error(w, "fail to insert meme tags", http.StatusBadRequest)
 	}
 }
