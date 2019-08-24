@@ -124,7 +124,7 @@ func InsertMemeAboutsAndTags(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "fail to insert meme abouts", http.StatusBadRequest)
 	}
 
-	if err := insertMemeTags(db, memes); err != nil {
+	if err := insertMemeTags(db, input.MemeDetails); err != nil {
 		log.Println(err.Error())
 		http.Error(w, "fail to insert meme tags", http.StatusBadRequest)
 	}
