@@ -103,9 +103,14 @@ func InsertMemeAboutsAndTags(db *sql.DB, w http.ResponseWriter, r *http.Request)
 
 // IncrementMemeClick api to increment meme's click
 func IncrementMemeClick(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	memeIDs := []int{1, 2, 3}
+	decoder := json.NewDecoder(r.Body)
+	var input memeIDInput
+	if err := decoder.Decode(&input); err != nil {
+		log.Println("cannot decode from request body")
+		http.Error(w, "can't parse request body", http.StatusBadRequest)
+	}
 
-	if err := incrementClick(db, memeIDs); err != nil {
+	if err := incrementClick(db, input.IDs); err != nil {
 		log.Println(err.Error())
 		http.Error(w, "fail to increment meme click", http.StatusBadRequest)
 	}
