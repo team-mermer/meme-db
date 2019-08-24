@@ -41,8 +41,14 @@ func GetMemeWithoutTags(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "connect db error", http.StatusBadRequest)
 	}
 
-	limit := 100
-	memes, _ := getMemesWithoutAbout(db, limit)
+	decoder := json.NewDecoder(r.Body)
+	var input memeIDInput
+	if err := decoder.Decode(&input); err != nil {
+		log.Println("cannot decode from request body")
+		http.Error(w, "can't parse request body", http.StatusBadRequest)
+	}
+
+	memes, _ := getMemesWithoutAbout(db, input.NumOfResult)
 	jsonString, _ := json.Marshal(memes)
 
 	if _, err := w.Write(jsonString); err != nil {
@@ -148,14 +154,9 @@ func IncrementMemeClick(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "connect db error", http.StatusBadRequest)
 	}
 
-	decoder := json.NewDecoder(r.Body)
-	var input memeIDInput
-	if err := decoder.Decode(&input); err != nil {
-		log.Println("cannot decode from request body")
-		http.Error(w, "can't parse request body", http.StatusBadRequest)
-	}
+	memeIDs := []int{1, 2, 3}
 
-	if err := incrementClick(db, input.IDs); err != nil {
+	if err := incrementClick(db, memeIDs); err != nil {
 		log.Println(err.Error())
 		http.Error(w, "fail to increment meme click", http.StatusBadRequest)
 	}
