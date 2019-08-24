@@ -7,7 +7,8 @@ type memeIcon struct {
 }
 
 type memeIDInput struct {
-	IDs []int `json:"meme_ids"`
+	IDs         []int `json:"meme_ids,omitempty"`
+	NumOfResult int   `json:"n_result,omitempty"`
 }
 
 type trendingInput struct {
