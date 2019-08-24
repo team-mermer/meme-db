@@ -17,13 +17,13 @@ func GetMemeDetails(w http.ResponseWriter, r *http.Request) {
 	}
 
 	decoder := json.NewDecoder(r.Body)
-	var idInput memeIDInput
-	if err := decoder.Decode(&idInput); err != nil {
+	var input memeIDInput
+	if err := decoder.Decode(&input); err != nil {
 		log.Println("cannot decode from request body")
-		http.Error(w, "can't write json string to response", http.StatusBadRequest)
+		http.Error(w, "can't parse request body", http.StatusBadRequest)
 	}
 
-	memes, _ := getMemesByIds(db, idInput.IDs)
+	memes, _ := getMemesByIds(db, input.IDs)
 	jsonString, _ := json.Marshal(memes)
 
 	if _, err := w.Write(jsonString); err != nil {
@@ -60,8 +60,14 @@ func GetTrendingMemes(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "connect db error", http.StatusBadRequest)
 	}
 
-	limit := 100
-	memes, _ := getTopClickedMemes(db, limit)
+	decoder := json.NewDecoder(r.Body)
+	var input trendingInput
+	if err := decoder.Decode(&input); err != nil {
+		log.Println("cannot decode from request body")
+		http.Error(w, "can't parse request body", http.StatusBadRequest)
+	}
+
+	memes, _ := getTopClickedMemes(db, input.NumOfResult)
 	jsonString, _ := json.Marshal(memes)
 
 	if _, err := w.Write(jsonString); err != nil {
