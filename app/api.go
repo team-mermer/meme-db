@@ -17,13 +17,13 @@ func GetMemeDetails(w http.ResponseWriter, r *http.Request) {
 	}
 
 	decoder := json.NewDecoder(r.Body)
-	var memeIds []int
-	if err := decoder.Decode(&memeIds); err != nil {
+	var idInput memeIDInput
+	if err := decoder.Decode(&idInput); err != nil {
 		log.Println("cannot decode from request body")
 		http.Error(w, "can't write json string to response", http.StatusBadRequest)
 	}
 
-	memes, _ := getMemesByIds(db, memeIds)
+	memes, _ := getMemesByIds(db, idInput.IDs)
 	jsonString, _ := json.Marshal(memes)
 
 	if _, err := w.Write(jsonString); err != nil {
