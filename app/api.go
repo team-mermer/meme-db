@@ -1,20 +1,15 @@
 package app
 
 import (
+	"database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
 )
 
 // GetMemeDetails api func to return meme details
-func GetMemeDetails(w http.ResponseWriter, r *http.Request) {
+func GetMemeDetails(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// w.Header().Set("Access-Control-Allow-Origin", "*")
-
-	db, connectErr := connectDB()
-	if connectErr != nil {
-		log.Println(connectErr.Error())
-		http.Error(w, "connect db error", http.StatusBadRequest)
-	}
 
 	decoder := json.NewDecoder(r.Body)
 	var input memeIDInput
@@ -34,13 +29,7 @@ func GetMemeDetails(w http.ResponseWriter, r *http.Request) {
 }
 
 // GetMemeWithoutTags api func to return meme details which has no tags
-func GetMemeWithoutTags(w http.ResponseWriter, r *http.Request) {
-	db, connectErr := connectDB()
-	if connectErr != nil {
-		log.Println(connectErr.Error())
-		http.Error(w, "connect db error", http.StatusBadRequest)
-	}
-
+func GetMemeWithoutTags(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var input memeIDInput
 	if err := decoder.Decode(&input); err != nil {
@@ -59,13 +48,7 @@ func GetMemeWithoutTags(w http.ResponseWriter, r *http.Request) {
 }
 
 // GetTrendingMemes api func to return trending meme details ordered by click
-func GetTrendingMemes(w http.ResponseWriter, r *http.Request) {
-	db, connectErr := connectDB()
-	if connectErr != nil {
-		log.Println(connectErr.Error())
-		http.Error(w, "connect db error", http.StatusBadRequest)
-	}
-
+func GetTrendingMemes(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var input trendingInput
 	if err := decoder.Decode(&input); err != nil {
@@ -84,13 +67,7 @@ func GetTrendingMemes(w http.ResponseWriter, r *http.Request) {
 }
 
 // InsertMemeWithoutTags api to insert meme's basic info besides tags and about
-func InsertMemeWithoutTags(w http.ResponseWriter, r *http.Request) {
-	db, connectErr := connectDB()
-	if connectErr != nil {
-		log.Println(connectErr.Error())
-		http.Error(w, "connect db error", http.StatusBadRequest)
-	}
-
+func InsertMemeWithoutTags(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var input memeDetailsInput
 	if err := decoder.Decode(&input); err != nil {
@@ -105,13 +82,7 @@ func InsertMemeWithoutTags(w http.ResponseWriter, r *http.Request) {
 }
 
 // InsertMemeAboutsAndTags api to insert meme's advanced info, i.e. tags and about
-func InsertMemeAboutsAndTags(w http.ResponseWriter, r *http.Request) {
-	db, connectErr := connectDB()
-	if connectErr != nil {
-		log.Println(connectErr.Error())
-		http.Error(w, "connect db error", http.StatusBadRequest)
-	}
-
+func InsertMemeAboutsAndTags(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var input memeDetailsInput
 	if err := decoder.Decode(&input); err != nil {
@@ -131,13 +102,7 @@ func InsertMemeAboutsAndTags(w http.ResponseWriter, r *http.Request) {
 }
 
 // IncrementMemeClick api to increment meme's click
-func IncrementMemeClick(w http.ResponseWriter, r *http.Request) {
-	db, connectErr := connectDB()
-	if connectErr != nil {
-		log.Println(connectErr.Error())
-		http.Error(w, "connect db error", http.StatusBadRequest)
-	}
-
+func IncrementMemeClick(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	memeIDs := []int{1, 2, 3}
 
 	if err := incrementClick(db, memeIDs); err != nil {

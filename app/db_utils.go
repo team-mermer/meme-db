@@ -10,19 +10,36 @@ import (
 	_ "github.com/lib/pq" // postgres driver
 )
 
-func connectDB() (*sql.DB, error) {
-	connectString := `
-		user=postgres 
-		password=meme 
-		host=35.192.115.150 
-		dbname=meme-db 
-		sslmode=disable 
-	`
+// DBConfig to store DB-related config
+type DBConfig struct {
+	User     string
+	Password string
+	Host     string
+	DBName   string
+	SSLMode  bool
+}
+
+// ConnectDB will connect to DB according DBConfig
+func ConnectDB(config DBConfig) (*sql.DB, error) {
+	connectString := fmt.Sprintf(
+		`
+		user=%s
+		password=%s
+		host=%s
+		dbname=%s
+		sslmode=disable
+		`,
+		config.User,
+		config.Password,
+		config.Host,
+		config.DBName)
+
 	db, openErr := sql.Open("postgres", connectString)
 	if openErr != nil {
 		log.Fatal(openErr)
 		return db, openErr
 	}
+	defer db.Close()
 
 	if err := db.Ping(); err != nil {
 		log.Fatal(err)
