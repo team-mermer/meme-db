@@ -394,3 +394,30 @@ func insertAndGetNewTagIDMap(db *sql.DB, memes []memeDetail) (map[string]int, er
 
 	return newTagIDMap, nil
 }
+
+func incrementClick(db *sql.DB, memeIDs []int) error {
+	strIDs := make([]string, 0)
+	for _, memeID := range memeIDs {
+		strID := strconv.Itoa(memeID)
+		strIDs = append(strIDs, strID)
+	}
+
+	sqlStr := fmt.Sprintf(
+		`
+		UPDATE meme
+		SET
+			click = click + 1
+		WHERE
+			id IN(%s)
+		`,
+		strIDs)
+	stmt, _ := db.Prepare(sqlStr)
+
+	//format all vals at once
+	if _, err := stmt.Exec(); err != nil {
+		log.Printf("DB statement execution with error: %v\n", err)
+		return err
+	}
+
+	return nil
+}
