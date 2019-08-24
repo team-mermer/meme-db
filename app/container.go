@@ -22,3 +22,7 @@ type memeDetail struct {
 	About    string   `json:"about,omitempty"`
 	Tags     []string `json:"tags,omitempty"`
 }
+
+type memeDetailsInput struct {
+	MemeDetails []memeDetail `json:"meme_details"`
+}
