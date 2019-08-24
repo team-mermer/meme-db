@@ -6,15 +6,12 @@ type memeIcon struct {
 	ItemURL  string `json:"item_url"`
 }
 
-type searchInput struct {
-	Input       string `json:"input"`
-	NumOfResult int    `json:"n_result"`
-	Page        int    `json:"page"`
+type memeIDInput struct {
+	IDs []int `json:"meme_ids"`
 }
 
 type trendingInput struct {
 	NumOfResult int `json:"n_result"`
-	Page        int `json:"page"`
 }
 
 type memeDetail struct {
