@@ -46,6 +46,25 @@ func GetMemeWithoutTags(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// GetTrendingMemes api func to return trending meme details ordered by click
+func GetTrendingMemes(w http.ResponseWriter, r *http.Request) {
+	db, connectErr := connectDB()
+	if connectErr != nil {
+		log.Println(connectErr.Error())
+		http.Error(w, "connect db error", http.StatusBadRequest)
+	}
+
+	limit := 100
+	memes, _ := getTopClickedMemes(db, limit)
+	jsonString, _ := json.Marshal(memes)
+
+	if _, err := w.Write(jsonString); err != nil {
+		log.Println(err.Error())
+		log.Printf("json content:\n %s\n", jsonString)
+		http.Error(w, "can't write json string to response", http.StatusBadRequest)
+	}
+}
+
 // InsertMemeWithoutTags api to insert meme's basic info besides tags and about
 func InsertMemeWithoutTags(w http.ResponseWriter, r *http.Request) {
 	db, connectErr := connectDB()
