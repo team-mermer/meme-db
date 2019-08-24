@@ -29,9 +29,10 @@ func main() {
 	}
 
 	var config app.DBConfig
-	if err := yaml.Unmarshal([]byte(data), &config); err != nil {
+	if err := yaml.Unmarshal(data, &config); err != nil {
 		log.Fatalf("error: %v", err)
 	}
+	log.Printf("Get config: %v\n", config)
 
 	// add func to handle url request
 	http.Handle("/get_meme_details", serveWrapper(config, app.GetMemeDetails))
