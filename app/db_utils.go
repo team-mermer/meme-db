@@ -163,6 +163,85 @@ func getMemesWithoutAbout(db *sql.DB, limit int) ([]memeDetail, error) {
 	return memes, nil
 }
 
+// TODO @jeff: try to refactor this with getMemeByIDs
+func getTopClickedMemes(db *sql.DB, numOfTop int) ([]memeDetail, error) {
+	var memes []memeDetail
+
+	sqlQuery := fmt.Sprintf(
+		`
+		SELECT
+			meme.id,
+			meme.title,
+			meme.image_path,
+			meme.about,
+			tag.name
+		FROM
+			meme
+		LEFT JOIN
+			meme_tag
+		ON
+			meme.id = meme_tag.meme_id
+		INNER JOIN
+			tag
+		ON
+			meme_tag.tag_id = tag.id
+		ORDER BY
+			meme.click
+		DESC
+		LIMIT %d
+		`,
+		numOfTop)
+
+	rows, queryErr := db.Query(sqlQuery)
+	if queryErr != nil {
+		log.Print(queryErr)
+		return memes, queryErr
+	}
+	defer rows.Close()
+
+	IDToMemeMap := make(map[int]memeDetail)
+
+	for rows.Next() {
+		var (
+			id    int
+			title string
+			path  string
+			about string
+			tag   string
+		)
+		if err := rows.Scan(&id, &title, &path, &about, &tag); err != nil {
+			log.Fatal(err)
+			return memes, err
+		}
+
+		meme, exists := IDToMemeMap[id]
+		if exists {
+			meme.Tags = append(meme.Tags, tag)
+		} else {
+			tags := []string{tag}
+			meme := memeDetail{
+				ID:       id,
+				Title:    title,
+				ImageURL: path,
+				About:    about,
+				Tags:     tags,
+			}
+			IDToMemeMap[id] = meme
+		}
+	}
+
+	if err := rows.Err(); err != nil {
+		log.Fatal(err)
+		return memes, err
+	}
+
+	for _, meme := range IDToMemeMap {
+		memes = append(memes, meme)
+	}
+
+	return memes, nil
+}
+
 func insertMemes(db *sql.DB, memes []memeDetail) error {
 	sqlStr := "INSERT INTO meme(title, image_path) VALUES "
 	vals := []interface{}{}
