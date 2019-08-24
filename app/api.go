@@ -128,8 +128,8 @@ func InsertMemeAboutsAndTags(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// IncrementClick api to increment meme's click
-func IncrementClick(w http.ResponseWriter, r *http.Request) {
+// IncrementMemeClick api to increment meme's click
+func IncrementMemeClick(w http.ResponseWriter, r *http.Request) {
 	db, connectErr := connectDB()
 	if connectErr != nil {
 		log.Println(connectErr.Error())
