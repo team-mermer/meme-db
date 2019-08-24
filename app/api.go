@@ -91,22 +91,14 @@ func InsertMemeWithoutTags(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "connect db error", http.StatusBadRequest)
 	}
 
-	memes := []memeDetail{
-		memeDetail{
-			Title:    "corgi-1",
-			ImageURL: "http://placecorgi.com/600/600",
-			About:    "",
-			Tags:     nil,
-		},
-		memeDetail{
-			Title:    "corgi-2",
-			ImageURL: "http://placecorgi.com/600/600",
-			About:    "",
-			Tags:     nil,
-		},
+	decoder := json.NewDecoder(r.Body)
+	var input memeDetailsInput
+	if err := decoder.Decode(&input); err != nil {
+		log.Println("cannot decode from request body")
+		http.Error(w, "can't parse request body", http.StatusBadRequest)
 	}
 
-	if err := insertMemes(db, memes); err != nil {
+	if err := insertMemes(db, input.MemeDetails); err != nil {
 		log.Println(err.Error())
 		http.Error(w, "fail to insert memes without tags", http.StatusBadRequest)
 	}
