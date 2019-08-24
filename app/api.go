@@ -108,3 +108,19 @@ func InsertMemeAboutsAndTags(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "fail to insert meme tags", http.StatusBadRequest)
 	}
 }
+
+// IncrementClick api to increment meme's click
+func IncrementClick(w http.ResponseWriter, r *http.Request) {
+	db, connectErr := connectDB()
+	if connectErr != nil {
+		log.Println(connectErr.Error())
+		http.Error(w, "connect db error", http.StatusBadRequest)
+	}
+
+	memeIDs := []int{1, 2, 3}
+
+	if err := incrementClick(db, memeIDs); err != nil {
+		log.Println(err.Error())
+		http.Error(w, "fail to increment meme click", http.StatusBadRequest)
+	}
+}
