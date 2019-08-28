@@ -12,11 +12,11 @@ import (
 
 // DBConfig to store DB-related config
 type DBConfig struct {
-	User     string
-	Password string
-	Host     string
-	DBName   string
-	SSLMode  bool
+	User     string `yaml:"User"`
+	Password string `yaml:"Password"`
+	Host     string `yaml:"Host"`
+	DBName   string `yaml:"DBName"`
+	SSLMode  bool   `yaml:"SSLMode"`
 }
 
 // ConnectDB will connect to DB according DBConfig
