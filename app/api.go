@@ -3,9 +3,43 @@ package app
 import (
 	"database/sql"
 	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net/http"
+
+	"gopkg.in/yaml.v2"
 )
+
+// GetDBConfig read in DBConfig from yaml file
+func GetDBConfig(filename string) (DBConfig, error) {
+	var config DBConfig
+
+	data, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return config, err
+	}
+
+	if err := yaml.Unmarshal(data, &config); err != nil {
+		log.Fatalf("error: %v", err)
+		return config, err
+	}
+
+	log.Printf("Get config: %v\n", config)
+
+	return config, nil
+}
+
+// ServeWrapper setup db from yaml config for serveFunc
+func ServeWrapper(config DBConfig, serveFunc func(*sql.DB, http.ResponseWriter, *http.Request)) http.Handler {
+	db, err := ConnectDB(config)
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		serveFunc(db, w, r)
+	})
+}
 
 // GetMemeDetails api func to return meme details
 func GetMemeDetails(db *sql.DB, w http.ResponseWriter, r *http.Request) {
