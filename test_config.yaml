@@ -1,0 +1,5 @@
+User:     "postgres"
+Password: "meme"
+Host:     "127.0.0.1"
+DBName:   "meme-db"
+SSLMode:  false
